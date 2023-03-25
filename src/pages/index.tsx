@@ -1,9 +1,9 @@
 import axios from 'axios'
+import { toast } from 'react-toastify'
 import { useRef, useEffect, Fragment, useMemo, useCallback } from 'react'
 import { PaperAirplaneIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 
 import { USERNAME_KEY } from '@/global/constants'
-
 import { preventDefault } from '@/utils/ui'
 import useChatReducer, { actions } from '@/reducers/chat'
 
@@ -43,8 +43,6 @@ export default function Chat() {
     [dispatch],
   )
 
-  const afterWrite = useCallback(() => actions.setLoading(false), [])
-
   const handleClearChat = () => dispatch(actions.clearMessages())
 
   const handlePrompt = async () => {
@@ -78,6 +76,8 @@ export default function Chat() {
       }
 
       dispatch(actions.addMessage(llamaMessage))
+    } catch (err) {
+      toast.error('Something went wrong, please try again later. :(')
     } finally {
       dispatch(actions.setLoading(false))
     }

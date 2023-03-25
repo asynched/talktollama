@@ -3,17 +3,17 @@ import { LLaMA } from '@/llama/client'
 import { uuid } from '@/utils/uuid'
 
 const handler: NextApiHandler = async (req, res) => {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' })
+  }
+
+  const prompt = req.body.prompt
+
+  if (!prompt) {
+    return res.status(400).json({ message: 'Missing prompt' })
+  }
+
   try {
-    if (req.method !== 'POST') {
-      return res.status(405).json({ message: 'Method not allowed' })
-    }
-
-    const prompt = req.body.prompt
-
-    if (!prompt) {
-      return res.status(400).json({ message: 'Missing prompt' })
-    }
-
     const client = new LLaMA()
     const answer = await client.getCompletion(prompt)
 
