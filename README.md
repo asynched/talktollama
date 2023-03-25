@@ -1,6 +1,6 @@
 # Talk to LLaMA
 
-A front-end for interacting with the LLaMA GPT model
+A front-end for interacting with the LLaMA model.
 
 ## Preview
 
