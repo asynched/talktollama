@@ -79,6 +79,10 @@ export default function Chat() {
     <div className="flex h-screen max-h-screen w-full bg-zinc-900 text-white">
       <Head>
         <title>Talk to LLaMA</title>
+        <meta
+          name="description"
+          content="Talk to LLaMA: Ask questions to an AI and receive personalized answers. The AI uses large language models to provide accurate and timely responses similar to ChatGPT."
+        />
         <link rel="shortcut icon" href="/favicon.svg" type="image/svg" />
       </Head>
       <MessageNav messages={userMessages} />
@@ -135,10 +139,15 @@ export default function Chat() {
               autoComplete="off"
               disabled={loading}
             />
-            <button type="button" onClick={handleClearChat} disabled={loading}>
+            <button
+              type="button"
+              onClick={handleClearChat}
+              disabled={loading}
+              aria-label="Clear chat"
+            >
               <ArrowPathIcon className="h-6 w-6 text-purple-500" />
             </button>
-            <button type="submit" disabled={loading}>
+            <button type="submit" aria-label="Send prompt" disabled={loading}>
               <PaperAirplaneIcon className="h-6 w-6 text-purple-500" />
             </button>
           </form>

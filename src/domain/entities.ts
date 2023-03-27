@@ -20,6 +20,3 @@ export type LLamaResponse = {
   answer: string
   createdAt: string
 }
-
-export const filterUserMessages = (messages: Message[]): UserMessageType[] =>
-  messages.filter((message) => message.type === 'user') as UserMessageType[]
