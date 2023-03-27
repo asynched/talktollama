@@ -4,7 +4,6 @@ import { Message } from '@/domain/entities'
 const INITIAL_STATE = {
   messages: [] as Message[],
   loading: false,
-  name: '',
 }
 
 type State = typeof INITIAL_STATE
@@ -23,9 +22,6 @@ export const actions = {
   }),
   setLoading: (loading: boolean) => () => ({
     loading,
-  }),
-  setName: (name: string) => () => ({
-    name,
   }),
 }
 

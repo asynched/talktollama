@@ -27,6 +27,7 @@ const handler: NextApiHandler = async (req, res) => {
     console.error('Error:', err)
 
     return res.status(500).json({
+      error: err,
       message: 'Model timeout',
     })
   }

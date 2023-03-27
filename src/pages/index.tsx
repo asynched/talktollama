@@ -1,47 +1,35 @@
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useRef, useEffect, Fragment, useMemo, useCallback } from 'react'
+import { useRef, useEffect, Fragment, useMemo } from 'react'
 import { PaperAirplaneIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 
-import { USERNAME_KEY } from '@/global/constants'
+import { uuid } from '@/utils/uuid'
 import { preventDefault } from '@/utils/ui'
+import { filterUserMessages } from '@/domain/utilities'
 import useChatReducer, { actions } from '@/reducers/chat'
+
+import Head from 'next/head'
 
 import UserMessage from '@/components/messages/UserMessage'
 import LLamaMessage from '@/components/messages/LLamaMessage'
 import LLamaWaitingMessage from '@/components/messages/LLamaWaitingMessage'
 import StarterMessage from '@/components/messages/StarterMessage'
-import UserNameModal from '@/components/modals/UserNameModal'
 
 import MessageNav from '@/components/common/MessageNav'
 import When from '@/components/utils/When'
 
-import type { LLamaResponse, Message, UserMessageType } from '@/domain/entities'
-import { uuid } from '@/utils/uuid'
-import Head from 'next/head'
+import type { LLamaResponse, Message } from '@/domain/entities'
 
 export default function Chat() {
   const {
-    state: { loading, messages, name },
+    state: { loading, messages },
     dispatch,
   } = useChatReducer()
 
   const bottomMessagesRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
-  const userMessages = useMemo<UserMessageType[]>(() => {
-    return messages.filter(
-      (message) => message.type === 'user',
-    ) as UserMessageType[]
-  }, [messages])
-
-  const handleSetName = useCallback(
-    (name: string) => {
-      localStorage.setItem(USERNAME_KEY, name)
-      dispatch(actions.setName(name))
-    },
-    [dispatch],
-  )
+  const userMessages = useMemo(() => filterUserMessages(messages), [messages])
 
   const handleClearChat = () => dispatch(actions.clearMessages())
 
@@ -87,23 +75,12 @@ export default function Chat() {
     bottomMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  useEffect(() => {
-    const name = localStorage.getItem(USERNAME_KEY)
-
-    if (name) {
-      handleSetName(name)
-    }
-  }, [handleSetName])
-
   return (
     <div className="flex h-screen max-h-screen w-full bg-zinc-900 text-white">
       <Head>
         <title>Talk to LLaMA</title>
         <link rel="shortcut icon" href="/favicon.svg" type="image/svg" />
       </Head>
-      <When condition={!name}>
-        <UserNameModal onSetName={handleSetName} />
-      </When>
       <MessageNav messages={userMessages} />
       <main className="relative col-span-3 flex max-h-screen w-full flex-col overflow-auto">
         <When condition={messages.length !== 0} fallback={<StarterMessage />}>
@@ -111,7 +88,7 @@ export default function Chat() {
             {messages.map((message) => (
               <Fragment key={message.id}>
                 {message.type === 'user' ? (
-                  <UserMessage message={message} name={name || 'Guest'} />
+                  <UserMessage message={message} name={'Guest'} />
                 ) : (
                   <LLamaMessage message={message} />
                 )}
@@ -137,7 +114,23 @@ export default function Chat() {
             <input
               type="text"
               name="prompt"
-              className="mt-auto w-full rounded-full border border-zinc-700 bg-zinc-800 px-4 py-2 text-zinc-300 outline-none transition ease-in-out focus:border-transparent focus:ring-2 focus:ring-purple-600"
+              className="
+                mt-auto
+                w-full
+                rounded-full
+                border
+                border-zinc-700
+                bg-zinc-800
+                px-4
+                py-2
+                text-zinc-300
+                outline-none
+                transition
+                ease-in-out
+                focus:border-transparent
+                focus:ring-2
+                focus:ring-purple-600
+              "
               placeholder="Ask me anything... 🦙"
               autoComplete="off"
               disabled={loading}
